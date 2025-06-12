@@ -1,0 +1,152 @@
+body {
+    font-size: 12px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    background-color: rgb(237,237,237);
+    color: rgb(237,237,237);
+}
+
+.form {
+    background-color: rgb(35,35,35);
+    text-align: center;
+    margin: 0;
+    padding: 5px 0;
+    /* From https://css.glass */
+    border-radius: 16px;
+    backdrop-filter: blur(2.5px);
+    -webkit-backdrop-filter: blur(2.5px);
+}
+
+.row {
+    background: #bdc3c7;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #EDEDED, #FFFFFF);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #EDEDED, #FFFFFF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    display: flex;
+    text-align: left;
+    justify-content: space-around;
+    margin: 0.2px 0px;
+    border: solid 0.5px;
+    border-radius: 5px;
+    color: rgb(35,35,35);
+    font-size: 14px;
+}
+
+.label {
+    width: 50%;
+    padding: 1em 0 1em 1em;
+}
+
+.nome {
+    padding-bottom: 10px;
+}
+
+.predio {
+    padding-bottom: 10px;
+}
+
+.local {
+    padding-bottom: 10px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.button_happy {
+    appearance: none;
+    background-color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0.75em 0.75em;
+    background-image: url('../img/happy_unc.png');
+    background-size: contain;
+    
+}
+
+.button_happy:checked {
+    appearance: none;
+    background-color: green;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0.75em 0.75em;
+    box-shadow: 2px gray;
+    background-image: url('../img/happy_che.png');
+    background-size: contain;
+}
+
+.button_sad {
+    appearance: none;
+    background-color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0.75em 0.75em;
+    background-image: url('../img/sad_unc.png');
+    background-size: contain;
+}
+
+.button_sad:checked {
+    appearance: none;
+    background-color: red;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0.75em 0.75em;
+    background-image: url('../img/sad_che.png');
+    background-size: contain;
+}
+
+.button_na {
+    appearance: none;
+    background-color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0.75em 0.75em;
+    background-image: url('../img/na_unc.png');
+    background-size: contain;
+}
+
+.button_na:checked {
+    appearance: none;
+    background-color: grey;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0.75em 0.75em;
+    background-image: url('../img/na_che.png');
+    background-size: contain;
+}
+
+.options {
+    display: flex;
+    margin: 0 0 0 30px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.submit {
+    display: flex;
+    padding-bottom: 5px;
+}
+
+.submit-button {
+    border-radius: 3px;
+    background-color: rgb(255,70,10);
+    color: rgb(237,237,237);
+    width: 50%;
+    margin: auto;
+    padding: 10px;
+    border: ridge;
+}
+
+.submit-button:active {
+    background-color: rgb(237,237,237);
+}
+
+.screen {
+    background-color: rgb(35,35,35);
+    border-radius: 16px;
+}

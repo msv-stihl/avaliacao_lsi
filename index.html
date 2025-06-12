@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/style_home.css">
+    <title>Avaliação Jardinagem</title>
+</head>
+<body>
+    <div class="header">
+        <h2 class="title">Links Avaliações</h1>
+    </div>
+    <div class="avaliacoes">
+        <a href="avaliacao_jar.html" class="botao-avaliacao">Avaliação Jardinagem</a>
+        <a href="avaliacao_lte.html" class="botao-avaliacao">Avaliação Técnica</a>
+        <a href="avaliacao_lcs.html" class="botao-avaliacao">Avaliação Salas</a>
+        <a href="avaliacao_lcb.html" class="botao-avaliacao">Avaliação Banheiros</a>
+    </div>
+    <div class="results">
+        <h2 class="title">Resultados</h1>
+        <select id="mes" name="mes" class="mes" onchange="updateGraphs()">
+            <option value="1">Janeiro</option>
+            <option value="2">Fevereiro</option>
+            <option value="3">Março</option>
+            <option value="4">Abril</option>
+            <option value="5">Maio</option>
+            <option value="6">Junho</option>
+            <option value="7">Julho</option>
+            <option value="8">Agosto</option>
+            <option value="9">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+        </select>
+        <div class="graficos">
+            <div class="gauge gauge_lco">
+                <h3 class="oficina">LC</h3>
+                <div class="gauge__body">
+                  <div class="gauge__fill"></div>
+                  <div class="gauge__cover"></div>
+                </div>
+            </div>
+            <div class="gauge gauge_lte">
+                <h3 class="oficina">LI</h3>
+                <div class="gauge__body">
+                  <div class="gauge__fill"></div>
+                  <div class="gauge__cover"></div>
+                </div>
+            </div>
+            <div class="gauge gauge_jar">
+                <h3 class="oficina">JD</h3>
+                <div class="gauge__body">
+                  <div class="gauge__fill"></div>
+                  <div class="gauge__cover"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/graphs.js"></script>
+</body>
+</html>
