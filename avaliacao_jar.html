@@ -10,7 +10,7 @@
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
         crossorigin="anonymous"></script>
     <script>
-        function SubForm (){
+        /*function SubForm (){
             getDate()
             const dados = {
                 planilha: "jar",
@@ -47,10 +47,35 @@
                 });
             }
         }
+        */
+
         function getDate(){
             const date = new Date().toLocaleString()
             document.getElementById('date').value = date
         }
+
+        const form = document.getElementById('form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbx-2uxmh-T890MdXfN4qYZDykpa-woanzzOVzw6cMQKCkjrZlZ700H2xvtlZ6PcMT_O/exec'; // <-- Paste your Web App URL here
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        alert("Resposta enviada!");
+                        form.reset();
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .catch(error => {
+                    alert('Erro!', error.message);
+                    console.error('Error!', error.message);
+                });
+        });
+
     </script>
 </head>
 <body>
