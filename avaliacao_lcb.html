@@ -5,44 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/style_lcb.css">
     <title>Avaliação Banheiros</title>
-    <script
-        src="https://code.jquery.com/jquery-3.4.1.js"
-        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-        crossorigin="anonymous"></script>
-    <script>
-        function SubForm (){
-            const fields = document.querySelectorAll('#form')
-            if(fields[0][0].value == "" || fields[0][2].value == ""){
-                alert("Preencha todos os campos antes de enviar")
-                location.reload()
-            } else {
-                getDate()
-                $.ajax({
-                    url:'https://api.apispreadsheets.com/data/Qq7S4OsWTtSQdfEa/',
-                    type:'post',
-                    data:$("#form").serializeArray(),
-                    success: function(){
-                    alert("Avaliação enviada :)")
-                    window.location.href = '/avaliacao_lsi'
-                    },
-                    error: function(){
-                    alert("TOcorreu um ero de conexão :(")
-                    location.reload()
-                    }
-                });
-            }
-        }
-        function getDate(){
-            const date = new Date().toLocaleString()
-            document.getElementById('date').value = date
-        }
-    </script>
 </head>
 <body>
     <div class="screen">
     <form class="form" id="form">
         <div class="header">
             <h1 class="title">Avaliação de Eficácia | Banheiros</h1>
+            <input type="hidden" name="sheetName" id="sheetName" value="lco">
             <div class="nome">
                 <label for="nome">Digite seu nome:</label>
                 <input type="text" name="nome" id="nome" required>
@@ -185,14 +154,42 @@
             </div>
         </div>
         <input type="hidden" name="date" id="date" value="">
-        <!--div class="submit">
+        <div class="submit">
             <label for="submit"></label>
             <input type="submit" name="submit" id="submit" class="submit-button" value="Enviar">
-        </div-->
+        </div>
     </form>
-    <div class="submit">
-        <button onclick="SubForm()" class="submit-button">Avaliar</button>
     </div>
-    </div>
+    <script>
+        function getDate(){
+            const date = new Date().toLocaleString()
+            document.getElementById('date').value = date
+        }
+
+        var form = document.getElementById("form");
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            getDate();
+            const formData = new FormData(form);
+            console.log(formData);
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbx-2uxmh-T890MdXfN4qYZDykpa-woanzzOVzw6cMQKCkjrZlZ700H2xvtlZ6PcMT_O/exec'; // <-- Paste your Web App URL here
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        alert("Resposta enviada!");
+                        form.reset();
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .catch(error => {
+                    alert('Ok!');
+                    console.error('Error!', error.message);
+                    window.location.href = '/avaliacao_lsi'
+                });
+        });
+    </script>
 </body>
 </html>
