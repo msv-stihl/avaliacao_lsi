@@ -5,78 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/style_jar.css">
     <title>Avaliação Jardinagem</title>
-    <script
-        src="https://code.jquery.com/jquery-3.4.1.js"
-        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-        crossorigin="anonymous"></script>
-    <script>
-        /*function SubForm (){
-            getDate()
-            const dados = {
-                planilha: "jar",
-                nome: document.getElementById("nome").value,
-                predio: document.getElementById("predios").value,
-                local: document.getElementById("local").value,
-                corte: document.getElementById("corte").value,
-                jardins: document.getElementById("jardins").value,
-                podas: document.getElementById("podas").value,
-                data: document.getElementById("date").value
-            };
-            const formData = new FormData();
-            for (const chave in dados) {
-                formData.append(chave, dados[chave]);
-            };
-            const fields = document.querySelectorAll('#form');
-            if(fields[0][0].value == "" || fields[0][2].value == ""){
-                alert("Preencha todos os campos antes de enviar");
-                location.reload();
-            } else {
-                fetch("https://script.google.com/macros/s/AKfycbx-2uxmh-T890MdXfN4qYZDykpa-woanzzOVzw6cMQKCkjrZlZ700H2xvtlZ6PcMT_O/exec", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(dados)
-                    })
-                    .then(response => response.text())
-                    .then(result => {
-                    console.log("Dados enviados:", result);
-                    })
-                    .catch(error => {
-                    console.error("Erro ao enviar:", error);
-                });
-            }
-        }
-        */
-
-        function getDate(){
-            const date = new Date().toLocaleString()
-            document.getElementById('date').value = date
-        }
-
-        const form = document.getElementById('form');
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbx-2uxmh-T890MdXfN4qYZDykpa-woanzzOVzw6cMQKCkjrZlZ700H2xvtlZ6PcMT_O/exec'; // <-- Paste your Web App URL here
-
-            fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.result === 'success') {
-                        alert("Resposta enviada!");
-                        form.reset();
-                    } else {
-                        throw new Error(data.error);
-                    }
-                })
-                .catch(error => {
-                    alert('Erro!', error.message);
-                    console.error('Error!', error.message);
-                });
-        });
-
-    </script>
 </head>
 <body>
     <div class="screen">
@@ -162,5 +90,73 @@
         <button onclick="SubForm()" class="submit-button">Avaliar</button>
     </div-->
     </div>
+    <script>
+        /*function SubForm (){
+            getDate()
+            const dados = {
+                planilha: "jar",
+                nome: document.getElementById("nome").value,
+                predio: document.getElementById("predios").value,
+                local: document.getElementById("local").value,
+                corte: document.getElementById("corte").value,
+                jardins: document.getElementById("jardins").value,
+                podas: document.getElementById("podas").value,
+                data: document.getElementById("date").value
+            };
+            const formData = new FormData();
+            for (const chave in dados) {
+                formData.append(chave, dados[chave]);
+            };
+            const fields = document.querySelectorAll('#form');
+            if(fields[0][0].value == "" || fields[0][2].value == ""){
+                alert("Preencha todos os campos antes de enviar");
+                location.reload();
+            } else {
+                fetch("https://script.google.com/macros/s/AKfycbx-2uxmh-T890MdXfN4qYZDykpa-woanzzOVzw6cMQKCkjrZlZ700H2xvtlZ6PcMT_O/exec", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(dados)
+                    })
+                    .then(response => response.text())
+                    .then(result => {
+                    console.log("Dados enviados:", result);
+                    })
+                    .catch(error => {
+                    console.error("Erro ao enviar:", error);
+                });
+            }
+        }
+        */
+
+        function getDate(){
+            const date = new Date().toLocaleString()
+            document.getElementById('date').value = date
+        }
+
+        var form = document.getElementById("form");
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbx-2uxmh-T890MdXfN4qYZDykpa-woanzzOVzw6cMQKCkjrZlZ700H2xvtlZ6PcMT_O/exec'; // <-- Paste your Web App URL here
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        alert("Resposta enviada!");
+                        form.reset();
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .catch(error => {
+                    alert('Erro!', error.message);
+                    console.error('Error!', error.message);
+                });
+        });
+
+    </script>
 </body>
 </html>
