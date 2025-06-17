@@ -1,90 +1,113 @@
-const gaugeElementJD = document.querySelector(".gauge_jar");
-const gaugeElementLC = document.querySelector(".gauge_lco");
-const gaugeElementLI = document.querySelector(".gauge_lte");
-var MES_SELECTED = document.getElementById('mes').value
+document.addEventListener('DOMContentLoaded', function() {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx-2uxmh-T890MdXfN4qYZDykpa-woanzzOVzw6cMQKCkjrZlZ700H2xvtlZ6PcMT_O/exec';
+    const tabNames = ['jar', 'lte', 'lco']; // The exact names of your three tabs
+    
+    const monthSelector = document.getElementById('monthSelector');
+    const currentYear = new Date().getFullYear();
 
-function setGaugeValue(gauge, value) {
-  if (value < 0 || value > 1) {
-    return;
-  }
-  gauge.querySelector(".gauge__fill").style.transform = `rotate(${
-    value / 2
-  }turn)`;
-  gauge.querySelector(".gauge__cover").textContent = `${
-    parseFloat(value * 100).toFixed(1)
-  }%`;
-}
+    // 1. SET UP THE MONTH SELECTOR (Same as before)
+    function setupMonthSelector() {
+        const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        const currentMonth = new Date().getMonth();
 
-function getDataLI() {
-  fetch("https://api.apispreadsheets.com/data/TBYz0elh6Dg1jVir/").then( res => {
-      return res.json()
-    }).then(data => {
-      calculateLI(data.data)
-    })
-}
+        monthNames.forEach((name, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = name;
+            if (index === currentMonth) {
+                option.selected = true;
+            }
+            monthSelector.appendChild(option);
+        });
 
-function getDataJD() {
-  fetch("https://api.apispreadsheets.com/data/W9CDGKNkP4EJzYao/").then( res => {
-      return res.json()
-    }).then(data => {
-      calculateJD(data.data)
-    })
-}
-
-function getDataLC() {
-  fetch("https://api.apispreadsheets.com/data/Qq7S4OsWTtSQdfEa/").then( res => {
-      return res.json()
-    }).then(data => {
-      calculateLC(data.data)
-    })
-}
-
-function calculateLI(data) {
-  var media = 0;
-  var qtd = 0;
-  data.forEach((row) => {
-    if(row.mes == MES_SELECTED && row.eficacia < 2){
-      media += row.eficacia
-      qtd++
+        monthSelector.addEventListener('change', fetchAllEfficiencies);
     }
-  })
-  media = media / qtd
-  setGaugeValue(gaugeElementLI, media)
-}
 
-function calculateJD(data) {
-  var media = 0;
-  var qtd = 0;
-  data.forEach((row) => {
-    if(row.mes == MES_SELECTED){
-      media += row.eficacia
-      qtd++
+    // 2. FETCH DATA FOR ALL TABS, CALCULATE, AND DISPLAY
+    function fetchAllEfficiencies() {
+        const selectedMonth = monthSelector.value;
+        
+        // Show loading state in all three containers
+        tabNames.forEach(tab => {
+            document.getElementById(`${tab}-display`).innerHTML = '<p>Carregando...</p>';
+        });
+
+        // Create an array of fetch promises, one for each tab
+        const promises = tabNames.map(tab => {
+            const url = `${scriptURL}?sheetName=${tab}&month=${selectedMonth}&year=${currentYear}`;
+            return fetch(url)
+                .then(res => res.json())
+                .then(result => {
+                    if (result.result !== 'success') {
+                        throw new Error(`Error for tab ${tab}: ${result.error}`);
+                    }
+                    return result.data; // Return just the data array
+                });
+        });
+
+        // Use Promise.all to wait for all fetches to complete
+        Promise.all(promises)
+            .then(results => {
+                // results is an array of data arrays: [jarData, lteData, lcoData]
+                results.forEach((data, index) => {
+                    const tabName = tabNames[index];
+                    const containerId = `${tabName}-display`;
+                    
+                    const average = calculateAverage(data);
+                    renderGraph(containerId, average);
+                });
+            })
+            .catch(error => {
+                console.error('An error occurred during fetch:', error);
+                // Show an error in all containers if something goes wrong
+                tabNames.forEach(tab => {
+                    document.getElementById(`${tab}-display`).innerHTML = `<p style="color: red;">Failed to load data.</p>`;
+                });
+            });
     }
-  })
-  media = media / qtd
-  setGaugeValue(gaugeElementJD, media)
-}
+    
+    // 3. REUSABLE FUNCTION TO CALCULATE AVERAGE EFFICIENCY
+    function calculateAverage(data) {
+        if (!data || data.length === 0) {
+            return null; // Return null if there's no data
+        }
+        
+        // Find the last column name from the first row of data
+        const headers = Object.keys(data[0]);
+        const efficiencyColumnName = headers[headers.length - 1];
 
-function calculateLC(data) {
-  var media = 0;
-  var qtd = 0;
-  data.forEach((row) => {
-    if(row.mes == MES_SELECTED){
-      media += row.eficacia
-      qtd++
+        const efficiencies = data
+            .map(row => parseFloat(row[efficiencyColumnName]))
+            .filter(value => !isNaN(value)); // Ensure we only have numbers
+
+        if (efficiencies.length === 0) {
+            return null; // Return null if there's no valid numeric data
+        }
+
+        const sum = efficiencies.reduce((total, current) => total + current, 0);
+        return sum / efficiencies.length;
     }
-  })
-  media = media / qtd
-  setGaugeValue(gaugeElementLC, media)
-}
 
-getDataLI()
-getDataJD()
-getDataLC()
+    // 4. REUSABLE FUNCTION TO RENDER THE "GRAPH"
+    function renderGraph(containerId, averagePercentage) {
+        const container = document.getElementById(containerId);
+        
+        if (averagePercentage === null) {
+            container.innerHTML = '<h3>Sem Dados</h3>';
+            return;
+        }
 
-function updateGraphs() {
-  MES_SELECTED = document.getElementById('mes').value
-  getDataLI()
-  getDataJD()
-  getDataLC()
-}
+        const percentage = averagePercentage.toFixed(2);
+        container.innerHTML = `
+            <div class="efficiency-bar-container">
+                <div class="efficiency-bar" style="width: ${percentage}%;">
+                    ${percentage}%
+                </div>
+            </div>
+        `;
+    }
+
+    // --- INITIALIZE THE PAGE ---
+    setupMonthSelector();
+    fetchAllEfficiencies(); // Fetch data for all tabs on initial page load
+});
