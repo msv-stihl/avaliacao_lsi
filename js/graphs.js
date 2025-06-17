@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbx-2uxmh-T890MdXfN4qYZDykpa-woanzzOVzw6cMQKCkjrZlZ700H2xvtlZ6PcMT_O/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxg5oupSu7G5P2rV4OqR6qTvMgYKxHWRNyW8hYaAIkZnhaH8Dq-idl3-MYv94aYfyAr/exec';
     const tabNames = ['jar', 'lte', 'lco']; // The exact names of your three tabs
     
     const monthSelector = document.getElementById('monthSelector');
