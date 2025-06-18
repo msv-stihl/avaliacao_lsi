@@ -104,13 +104,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderGraph(containerId, averagePercentage) {
-        const container = document.getElementById(containerId);
-        if (averagePercentage === null) {
-            container.innerHTML = '<h3>Sem Dados</h3>';
-            return;
-        }
-        const percentage = averagePercentage.toFixed(2);
-        container.innerHTML = `<div class="efficiency-bar-container"><div class="efficiency-bar" style="width: ${percentage}%;">${percentage}%</div></div>`;
+      const container = document.getElementById(containerId);
+      
+      if (averagePercentage === null) {
+          container.innerHTML = '<h3>Sem Dados</h3>';
+          return;
+      }
+
+      // --- THE FIX IS HERE ---
+      // Convert the decimal average (e.g., 0.95) into a display-ready percentage (e.g., 95.00)
+      const displayValue = averagePercentage * 100;
+      const formattedPercentage = displayValue.toFixed(2); // Format to 2 decimal places
+
+      container.innerHTML = `
+          <div class="efficiency-bar-container">
+              <div class="efficiency-bar" style="width: ${formattedPercentage}%;">
+                  ${formattedPercentage}%
+              </div>
+          </div>
+      `;
     }
 
     // Initialize the page
