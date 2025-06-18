@@ -1,113 +1,119 @@
 document.addEventListener('DOMContentLoaded', function() {
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxg5oupSu7G5P2rV4OqR6qTvMgYKxHWRNyW8hYaAIkZnhaH8Dq-idl3-MYv94aYfyAr/exec';
-    const tabNames = ['jar', 'lte', 'lco']; // The exact names of your three tabs
+    const tabNames = ['jar', 'lte', 'lco']; 
     
     const monthSelector = document.getElementById('monthSelector');
     const currentYear = new Date().getFullYear();
 
-    // 1. SET UP THE MONTH SELECTOR (Same as before)
-    function setupMonthSelector() {
-        const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        const currentMonth = new Date().getMonth();
+    // This is a helper function to make a JSONP request.
+    function requestJsonp(baseUrl, params, callback) {
+        // Create a unique callback function name to avoid conflicts
+        const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+        
+        // The callback function will be called by the script returned from Google
+        window[callbackName] = function(data) {
+            delete window[callbackName]; // Clean up the global space
+            document.body.removeChild(script); // Remove the script tag
+            callback(null, data); // Call the original callback with the data
+        };
 
-        monthNames.forEach((name, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            option.textContent = name;
-            if (index === currentMonth) {
-                option.selected = true;
-            }
-            monthSelector.appendChild(option);
-        });
+        // Build the full URL with parameters and the callback function name
+        const queryParams = new URLSearchParams(params);
+        const script = document.createElement('script');
+        script.src = `${baseUrl}?callback=${callbackName}&${queryParams.toString()}`;
+        
+        script.onerror = () => {
+             delete window[callbackName];
+             document.body.removeChild(script);
+             callback(new Error('Failed to load script ' + script.src));
+        };
 
-        monthSelector.addEventListener('change', fetchAllEfficiencies);
+        // Add the script tag to the page to make the request
+        document.body.appendChild(script);
     }
 
-    // 2. FETCH DATA FOR ALL TABS, CALCULATE, AND DISPLAY
     function fetchAllEfficiencies() {
         const selectedMonth = monthSelector.value;
         
-        // Show loading state in all three containers
         tabNames.forEach(tab => {
             document.getElementById(`${tab}-display`).innerHTML = '<p>Carregando...</p>';
         });
 
-        // Create an array of fetch promises, one for each tab
+        // Create an array of JSONP requests as Promises
         const promises = tabNames.map(tab => {
-            const url = `${scriptURL}?sheetName=${tab}&month=${selectedMonth}&year=${currentYear}`;
-            return fetch(url)
-                .then(res => res.json())
-                .then(result => {
-                    if (result.result !== 'success') {
-                        throw new Error(`Error for tab ${tab}: ${result.error}`);
+            return new Promise((resolve, reject) => {
+                const params = {
+                    sheetName: tab,
+                    month: selectedMonth,
+                    year: currentYear
+                };
+                requestJsonp(scriptURL, params, (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        if (result.result !== 'success') {
+                           reject(new Error(`Error for tab ${tab}: ${result.error}`));
+                        } else {
+                           resolve(result.data);
+                        }
                     }
-                    return result.data; // Return just the data array
                 });
+            });
         });
 
-        // Use Promise.all to wait for all fetches to complete
+        // Promise.all works exactly the same as before
         Promise.all(promises)
             .then(results => {
-                // results is an array of data arrays: [jarData, lteData, lcoData]
                 results.forEach((data, index) => {
                     const tabName = tabNames[index];
                     const containerId = `${tabName}-display`;
-                    
                     const average = calculateAverage(data);
                     renderGraph(containerId, average);
                 });
             })
             .catch(error => {
                 console.error('An error occurred during fetch:', error);
-                // Show an error in all containers if something goes wrong
                 tabNames.forEach(tab => {
                     document.getElementById(`${tab}-display`).innerHTML = `<p style="color: red;">Failed to load data.</p>`;
                 });
             });
     }
     
-    // 3. REUSABLE FUNCTION TO CALCULATE AVERAGE EFFICIENCY
+    // The setup, calculate, and render functions remain unchanged.
+    function setupMonthSelector() {
+        const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        const currentMonth = new Date().getMonth();
+        monthNames.forEach((name, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = name;
+            if (index === currentMonth) option.selected = true;
+            monthSelector.appendChild(option);
+        });
+        monthSelector.addEventListener('change', fetchAllEfficiencies);
+    }
+
     function calculateAverage(data) {
-        if (!data || data.length === 0) {
-            return null; // Return null if there's no data
-        }
-        
-        // Find the last column name from the first row of data
+        if (!data || data.length === 0) return null;
         const headers = Object.keys(data[0]);
         const efficiencyColumnName = headers[headers.length - 1];
-
-        const efficiencies = data
-            .map(row => parseFloat(row[efficiencyColumnName]))
-            .filter(value => !isNaN(value)); // Ensure we only have numbers
-
-        if (efficiencies.length === 0) {
-            return null; // Return null if there's no valid numeric data
-        }
-
+        const efficiencies = data.map(row => parseFloat(row[efficiencyColumnName])).filter(value => !isNaN(value));
+        if (efficiencies.length === 0) return null;
         const sum = efficiencies.reduce((total, current) => total + current, 0);
         return sum / efficiencies.length;
     }
 
-    // 4. REUSABLE FUNCTION TO RENDER THE "GRAPH"
     function renderGraph(containerId, averagePercentage) {
         const container = document.getElementById(containerId);
-        
         if (averagePercentage === null) {
             container.innerHTML = '<h3>Sem Dados</h3>';
             return;
         }
-
         const percentage = averagePercentage.toFixed(2);
-        container.innerHTML = `
-            <div class="efficiency-bar-container">
-                <div class="efficiency-bar" style="width: ${percentage}%;">
-                    ${percentage}%
-                </div>
-            </div>
-        `;
+        container.innerHTML = `<div class="efficiency-bar-container"><div class="efficiency-bar" style="width: ${percentage}%;">${percentage}%</div></div>`;
     }
 
-    // --- INITIALIZE THE PAGE ---
+    // Initialize the page
     setupMonthSelector();
-    fetchAllEfficiencies(); // Fetch data for all tabs on initial page load
+    fetchAllEfficiencies();
 });
