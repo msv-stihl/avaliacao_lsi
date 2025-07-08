@@ -147,20 +147,27 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxg5oupSu7G5P2rV4OqR6qTvMgYKxHWRNyW8hYaAIkZnhaH8Dq-idl3-MYv94aYfyAr/exec';
 
         fetch(scriptURL, { method: 'POST', body: formData })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na resposta do servidor.');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.result === 'success') {
                     alert("Resposta enviada!");
                     form.reset();
                     document.querySelectorAll('.bloco-avaliacao').forEach(b => b.style.display = 'none');
                 } else {
-                    throw new Error(data.error);
+                    console.error('Erro no retorno:', data.error);
+                    alert("Ocorreu um erro ao processar sua resposta.");
                 }
             })
             .catch(error => {
-                alert('Erro ao enviar. Tente novamente.');
-                console.error('Error!', error.message);
+                console.error('Erro na requisição:', error);
+                alert("Erro de conexão. Verifique sua internet ou tente novamente.");
             });
+
     });
 </script>
 </body>
