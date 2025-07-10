@@ -70,6 +70,9 @@
                         <option value="vidros-externos">Vidros Externos</option>
                         <option value="vidros-internos">Vidros Internos</option>
                         <option value="guarda-corpos">Guarda-Corpos</option>
+                        <option value="elevador-pne">Elevador PNE</option>
+                        <option value="portao-basculante">Portão Basculante</option>
+                        <option value="espelho">Espelhos</option>
                     </select>
                 </div>
             </div>
@@ -109,8 +112,10 @@
                     if (data.result === 'success') {
                         alert("Resposta enviada!");
                         form.reset();
+                        window.location.href = '/avaliacao_lsi'
                     } else {
                         throw new Error(data.error);
+                        window.location.href = '/avaliacao_lsi'
                     }
                 })
                 .catch(error => {

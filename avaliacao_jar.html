@@ -108,8 +108,10 @@
                     if (data.result === 'success') {
                         alert("Resposta enviada!");
                         form.reset();
+                        window.location.href = '/avaliacao_lsi'
                     } else {
                         throw new Error(data.error);
+                        window.location.href = '/avaliacao_lsi'
                     }
                 })
                 .catch(error => {

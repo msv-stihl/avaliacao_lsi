@@ -158,16 +158,18 @@
                     alert("Resposta enviada!");
                     form.reset();
                     document.querySelectorAll('.bloco-avaliacao').forEach(b => b.style.display = 'none');
+                    window.location.href = '/avaliacao_lsi'
                 } else {
                     console.error('Erro no retorno:', data.error);
                     alert("Ocorreu um erro ao processar sua resposta.");
+                    window.location.href = '/avaliacao_lsi'
                 }
             })
             .catch(error => {
                 console.error('Erro na requisição:', error);
                 alert("Resposta enviada!");
+                window.location.href = '/avaliacao_lsi'
             });
-
     });
 </script>
 </body>
