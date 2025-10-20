@@ -126,6 +126,12 @@
     </div>
 </form>
 </div>
+<div id="loading-overlay" class="overlay">
+    <div class="loader-box">
+        <div class="spinner"></div>
+        <p class="loader-text">Enviando resposta...</p>
+    </div>
+</div>
 <script>
     function getDate() {
         const date = new Date().toLocaleString();
@@ -140,8 +146,14 @@
     });
 
     const form = document.getElementById("form");
+    const submitButton = document.getElementById("submit");
+    const overlay = document.getElementById("loading-overlay");
+
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        submitButton.disabled = true;
+        overlay.style.display = 'flex';
+
         getDate();
         const formData = new FormData(form);
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxg5oupSu7G5P2rV4OqR6qTvMgYKxHWRNyW8hYaAIkZnhaH8Dq-idl3-MYv94aYfyAr/exec';
@@ -169,6 +181,11 @@
                 console.error('Erro na requisição:', error);
                 alert("Resposta enviada!");
                 window.location.href = '/avaliacao_lsi'
+            })
+            .finally(() => {
+                    overlay.style.display = 'none';
+                    submitButton.disabled = false;
+                    window.location.href = '/avaliacao_lsi'
             });
     });
 </script>
