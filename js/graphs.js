@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxg5oupSu7G5P2rV4OqR6qTvMgYKxHWRNyW8hYaAIkZnhaH8Dq-idl3-MYv94aYfyAr/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbytKOXHwtfZw6_4W_7mIC6a9k7l4o37_ojyjMt4SmXJSrcq8Av9XJ7k4CTO4nTIt_20/exec';
     const tabNames = ['jar', 'lte', 'lco']; 
     
     const monthSelector = document.getElementById('monthSelector');
@@ -128,4 +128,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the page
     setupMonthSelector();
     fetchAllEfficiencies();
+
 });
