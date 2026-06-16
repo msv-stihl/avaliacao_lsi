@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     const scriptURL = 'https://script.google.com/macros/s/AKfycbytKOXHwtfZw6_4W_7mIC6a9k7l4o37_ojyjMt4SmXJSrcq8Av9XJ7k4CTO4nTIt_20/exec';
-    const tabNames = ['jar', 'lte', 'lco']; 
-    
+    const tabs = [
+        { sheetName: 'jar', containerId: 'jar-display' },
+        { sheetName: 'lte', containerId: 'lte-display' },
+        { sheetName: 'lco', containerId: 'lco-display' },
+        { sheetName: 'lps', containerId: 'lps-display' }
+    ];
+
     const monthSelector = document.getElementById('monthSelector');
     const currentYear = new Date().getFullYear();
 
@@ -34,16 +39,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function fetchAllEfficiencies() {
         const selectedMonth = monthSelector.value;
-        
-        tabNames.forEach(tab => {
-            document.getElementById(`${tab}-display`).innerHTML = '<p>Carregando...</p>';
+
+        tabs.forEach(tab => {
+            const container = document.getElementById(tab.containerId);
+            if (container) {
+                container.innerHTML = '<p>Carregando...</p>';
+            }
         });
 
         // Create an array of JSONP requests as Promises
-        const promises = tabNames.map(tab => {
+        const promises = tabs.map(tab => {
             return new Promise((resolve, reject) => {
                 const params = {
-                    sheetName: tab,
+                    sheetName: tab.sheetName,
                     month: selectedMonth,
                     year: currentYear
                 };
@@ -52,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         reject(error);
                     } else {
                         if (result.result !== 'success') {
-                           reject(new Error(`Error for tab ${tab}: ${result.error}`));
+                           reject(new Error(`Error for tab ${tab.sheetName}: ${result.error}`));
                         } else {
-                           resolve(result.data);
+                           resolve({ ...tab, data: result.data });
                         }
                     }
                 });
@@ -64,17 +72,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Promise.all works exactly the same as before
         Promise.all(promises)
             .then(results => {
-                results.forEach((data, index) => {
-                    const tabName = tabNames[index];
-                    const containerId = `${tabName}-display`;
-                    const average = calculateAverage(data);
-                    renderGraph(containerId, average);
+                results.forEach(result => {
+                    const average = calculateAverage(result.data);
+                    renderGraph(result.containerId, average);
                 });
             })
             .catch(error => {
                 console.error('An error occurred during fetch:', error);
-                tabNames.forEach(tab => {
-                    document.getElementById(`${tab}-display`).innerHTML = `<p style="color: red;">Failed to load data.</p>`;
+                tabs.forEach(tab => {
+                    const container = document.getElementById(tab.containerId);
+                    if (container) {
+                        container.innerHTML = '<p style="color: #b42318;">Falha ao carregar os dados.</p>';
+                    }
                 });
             });
     }
@@ -104,25 +113,45 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderGraph(containerId, averagePercentage) {
-      const container = document.getElementById(containerId);
-      
-      if (averagePercentage === null) {
-          container.innerHTML = '<h3>Sem Dados</h3>';
-          return;
-      }
+        const container = document.getElementById(containerId);
 
-      // --- THE FIX IS HERE ---
-      // Convert the decimal average (e.g., 0.95) into a display-ready percentage (e.g., 95.00)
-      const displayValue = averagePercentage * 100;
-      const formattedPercentage = displayValue.toFixed(2); // Format to 2 decimal places
+        if (!container) {
+            return;
+        }
 
-      container.innerHTML = `
-          <div class="efficiency-bar-container">
-              <div class="efficiency-bar" style="width: ${formattedPercentage}%;">
-                  ${formattedPercentage}%
-              </div>
-          </div>
-      `;
+        if (averagePercentage === null) {
+            container.innerHTML = '<p>Sem dados para o periodo selecionado.</p>';
+            return;
+        }
+
+        const displayValue = averagePercentage * 100;
+        const boundedValue = Math.max(0, Math.min(displayValue, 100));
+        const formattedPercentage = boundedValue.toFixed(2);
+
+        let statusClass = '';
+        let statusLabel = 'Alta';
+
+        if (boundedValue < 70) {
+            statusClass = 'is-danger';
+            statusLabel = 'Baixa';
+        } else if (boundedValue < 90) {
+            statusClass = 'is-warning';
+            statusLabel = 'Media';
+        }
+
+        container.innerHTML = `
+            <div class="efficiency-meta">
+                <strong class="efficiency-value">${formattedPercentage}%</strong>
+                <span class="efficiency-status ${statusClass}">${statusLabel}</span>
+            </div>
+            <div class="efficiency-bar-container" aria-label="Barra de eficacia">
+                <div class="efficiency-bar" style="width: ${formattedPercentage}%;"></div>
+            </div>
+            <div class="efficiency-scale">
+                <span>0%</span>
+                <span>100%</span>
+            </div>
+        `;
     }
 
     // Initialize the page

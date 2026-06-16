@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/style_lps.css">
+    <title>Avaliação Pisos</title>
+</head>
+<body>
+    <main class="page-shell">
+        <section class="form-card">
+            <a href="index.html" class="back-link">Voltar ao painel</a>
+
+            <header class="form-header">
+                <span class="eyebrow">Nova avaliação</span>
+                <h1>Avaliação de Pisos</h1>
+                <p>Registre a percepção de limpeza do piso com um envio simples e direto.</p>
+            </header>
+
+            <form id="form" class="form">
+                <input type="hidden" name="sheetName" id="sheetName" value="lps">
+                <input type="hidden" name="date" id="date" value="">
+
+                <div class="field-grid">
+                    <label class="field">
+                        <span>Nome</span>
+                        <input type="text" name="nome" id="nome" placeholder="Digite seu nome" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Prédio</span>
+                        <select id="predios" name="predios" required>
+                            <option value="P01">P01</option>
+                            <option value="P02">P02</option>
+                            <option value="P03">P03</option>
+                            <option value="P04">P04</option>
+                            <option value="P07">P07</option>
+                            <option value="P08">P08</option>
+                            <option value="P11">P11</option>
+                            <option value="P15">P15</option>
+                            <option value="P16">P16</option>
+                            <option value="P18">P18</option>
+                            <option value="P20">P20</option>
+                            <option value="P22">P22</option>
+                            <option value="P26">P26</option>
+                            <option value="P27">P27</option>
+                            <option value="P28">P28</option>
+                            <option value="P29">P29</option>
+                            <option value="P30">P30</option>
+                            <option value="P31">P31</option>
+                            <option value="P32">P32</option>
+                            <option value="P35">P35</option>
+                            <option value="P37">P37</option>
+                            <option value="P38">P38</option>
+                            <option value="P42">P42</option>
+                            <option value="P43">P43</option>
+                            <option value="P48">P48</option>
+                            <option value="P49">P49</option>
+                            <option value="P50">P50</option>
+                            <option value="P52">P52</option>
+                            <option value="P56">P56</option>
+                        </select>
+                    </label>
+
+                    <label class="field field-full">
+                        <span>Local avaliado</span>
+                        <input type="text" name="local" id="local" placeholder="Informe o local" required>
+                    </label>
+                </div>
+
+                <section class="rating-card" aria-labelledby="nota-title">
+                    <div class="rating-copy">
+                        <span class="rating-tag">Item único</span>
+                        <h2 id="nota-title">Como você avalia a limpeza do piso?</h2>
+                        <p>Escolha a carinha que melhor representa a condição observada.</p>
+                    </div>
+
+                    <div class="rating-options" role="radiogroup" aria-labelledby="nota-title">
+                        <label class="face-option">
+                            <input type="radio" name="nota" value="1" class="button_happy" required>
+                            <span>Bom</span>
+                        </label>
+                        <label class="face-option">
+                            <input type="radio" name="nota" value="0" class="button_sad">
+                            <span>Ruim</span>
+                        </label>
+                        <label class="face-option">
+                            <input type="radio" name="nota" value="2" class="button_na" checked>
+                            <span>N/A</span>
+                        </label>
+                    </div>
+                </section>
+
+                <button type="submit" id="submit" class="submit-button">Enviar avaliação</button>
+            </form>
+        </section>
+    </main>
+
+    <div id="loading-overlay" class="overlay" aria-hidden="true">
+        <div class="loader-box">
+            <div class="spinner"></div>
+            <p class="loader-text">Enviando resposta...</p>
+        </div>
+    </div>
+
+    <script>
+        function setCurrentDate() {
+            document.getElementById('date').value = new Date().toLocaleString();
+        }
+
+        const form = document.getElementById('form');
+        const submitButton = document.getElementById('submit');
+        const overlay = document.getElementById('loading-overlay');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let shouldRedirect = false;
+            submitButton.disabled = true;
+            overlay.style.display = 'flex';
+            setCurrentDate();
+
+            const formData = new FormData(form);
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbytKOXHwtfZw6_4W_7mIC6a9k7l4o37_ojyjMt4SmXJSrcq8Av9XJ7k4CTO4nTIt_20/exec';
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta do servidor.');
+                    }
+
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.result === 'success') {
+                        alert('Resposta enviada!');
+                        form.reset();
+                        shouldRedirect = true;
+                    } else {
+                        throw new Error(data.error || 'Erro ao processar a resposta.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    alert('Nao foi possivel enviar a avaliação. Tente novamente.');
+                })
+                .finally(() => {
+                    overlay.style.display = 'none';
+                    submitButton.disabled = false;
+                    if (shouldRedirect) {
+                        window.location.href = 'index.html';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
