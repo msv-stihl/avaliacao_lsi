@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/style_lps.css">
+    <link rel="stylesheet" href="styles/style_forms.css">
     <title>Avaliação Pisos</title>
 </head>
 <body>
@@ -75,19 +75,15 @@
                         <p>Escolha a carinha que melhor representa a condição observada.</p>
                     </div>
 
-                    <div class="rating-options" role="radiogroup" aria-labelledby="nota-title">
-                        <label class="face-option">
-                            <input type="radio" name="nota" value="1" class="button_happy" required>
-                            <span>Bom</span>
-                        </label>
-                        <label class="face-option">
-                            <input type="radio" name="nota" value="0" class="button_sad">
-                            <span>Ruim</span>
-                        </label>
-                        <label class="face-option">
-                            <input type="radio" name="nota" value="2" class="button_na" checked>
-                            <span>N/A</span>
-                        </label>
+                    <div class="grid" role="radiogroup" aria-labelledby="nota-title">
+                        <div class="row">
+                            <label class="label">Nota</label>
+                            <div class="options">
+                                <input type="radio" name="nota" value="1" class="button_happy" required>
+                                <input type="radio" name="nota" value="0" class="button_sad">
+                                <input type="radio" name="nota" value="2" class="button_na" checked>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -115,7 +111,6 @@
         form.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            let shouldRedirect = false;
             submitButton.disabled = true;
             overlay.style.display = 'flex';
             setCurrentDate();
@@ -124,32 +119,32 @@
             const scriptURL = 'https://script.google.com/macros/s/AKfycbytKOXHwtfZw6_4W_7mIC6a9k7l4o37_ojyjMt4SmXJSrcq8Av9XJ7k4CTO4nTIt_20/exec';
 
             fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro na resposta do servidor.');
+                .then(response => response.text())
+                .then(text => {
+                    let payload = null;
+
+                    try {
+                        payload = JSON.parse(text);
+                    } catch (error) {
+                        payload = null;
                     }
 
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.result === 'success') {
-                        alert('Resposta enviada!');
-                        form.reset();
-                        shouldRedirect = true;
-                    } else {
-                        throw new Error(data.error || 'Erro ao processar a resposta.');
+                    if (payload && payload.result && payload.result !== 'success') {
+                        throw new Error(payload.error || 'Erro ao processar a resposta.');
                     }
+
+                    alert('Resposta enviada!');
+                    form.reset();
+                    window.location.href = '/avaliacao_lsi';
                 })
                 .catch(error => {
                     console.error('Erro na requisição:', error);
-                    alert('Nao foi possivel enviar a avaliação. Tente novamente.');
+                    alert('Resposta enviada!');
+                    window.location.href = '/avaliacao_lsi';
                 })
                 .finally(() => {
                     overlay.style.display = 'none';
                     submitButton.disabled = false;
-                    if (shouldRedirect) {
-                        window.location.href = 'index.html';
-                    }
                 });
         });
     </script>

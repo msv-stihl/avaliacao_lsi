@@ -3,76 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/style_lcs.css">
+    <link rel="stylesheet" href="styles/style_forms.css">
     <title>Avaliação Limpeza Convencional</title>
     <style>
         .bloco-avaliacao { display: none; }
     </style>
 </head>
 <body>
-<div class="screen">
-<form class="form" id="form">
-    <div class="header">
-        <h1 class="title">Avaliação de Eficácia | Limpeza Convencional</h1>
-        <input type="hidden" name="sheetName" id="sheetName" value="lco">
+<main class="page-shell">
+    <section class="form-card">
+        <a href="index.html" class="back-link">Voltar ao painel</a>
 
-        <div class="tipo-avaliacao">
-            <label for="tipo">Tipo de Avaliação:</label>
-            <select name="tipo" id="tipo" required>
-                <option value="">Selecione...</option>
-                <option value="sala">Sala</option>
-                <option value="banheiro">Banheiro</option>
-                <option value="escadaria">Limpeza de Escadaria</option>
-                <option value="residuo">Recolhimento de Resíduo</option>
-                <option value="papelao">Recolhimento de Papelão</option>
-            </select>
-        </div>
+        <header class="form-header">
+            <span class="eyebrow">Avaliação</span>
+            <h1>Avaliação de Eficácia | Limpeza Convencional</h1>
+            <p>Selecione o tipo, informe o local e registre a avaliação.</p>
+        </header>
 
-        <div class="nome">
-            <label for="nome">Digite seu nome:</label>
-            <input type="text" name="nome" id="nome" required>
-        </div>
+        <form class="form" id="form">
+            <input type="hidden" name="sheetName" id="sheetName" value="lco">
 
-        <div class="predio">
-            <label for="predio">Selecione o prédio:</label>
-            <select id="predios" name="predios" class="predio-selecao" required>
-                <option value="P01">P01</option>
-                <option value="P02">P02</option>
-                <option value="P03">P03</option>
-                <option value="P04">P04</option>
-                <option value="P07">P07</option>
-                <option value="P08">P08</option>
-                <option value="P11">P11</option>
-                <option value="P15">P15</option>
-                <option value="P16">P16</option>
-                <option value="P18">P18</option>
-                <option value="P20">P20</option>
-                <option value="P22">P22</option>
-                <option value="P26">P26</option>
-                <option value="P27">P27</option>
-                <option value="P28">P28</option>
-                <option value="P29">P29</option>
-                <option value="P30">P30</option>
-                <option value="P31">P31</option>
-                <option value="P32">P32</option>
-                <option value="P35">P35</option>
-                <option value="P37">P37</option>
-                <option value="P38">P38</option>
-                <option value="P42">P42</option>
-                <option value="P43">P43</option>
-                <option value="P48">P48</option>
-                <option value="P49">P49</option>
-                <option value="P50">P50</option>
-                <option value="P52">P52</option>
-                <option value="P56">P56</option>
-            </select>
-        </div>
+            <div class="field-grid">
+                <label class="field field-full">
+                    <span>Tipo de avaliação</span>
+                    <select name="tipo" id="tipo" required>
+                        <option value="">Selecione...</option>
+                        <option value="sala">Sala</option>
+                        <option value="banheiro">Banheiro</option>
+                        <option value="escadaria">Limpeza de Escadaria</option>
+                        <option value="residuo">Recolhimento de Resíduo</option>
+                        <option value="papelao">Recolhimento de Papelão</option>
+                    </select>
+                </label>
 
-        <div class="local">
-            <label for="local">Local avaliado:</label>
-            <input type="text" name="local" id="local" required>
-        </div>
-    </div>
+                <label class="field">
+                    <span>Nome</span>
+                    <input type="text" name="nome" id="nome" placeholder="Digite seu nome" required>
+                </label>
+
+                <label class="field">
+                    <span>Prédio</span>
+                    <select id="predios" name="predios" required>
+                        <option value="P01">P01</option>
+                        <option value="P02">P02</option>
+                        <option value="P03">P03</option>
+                        <option value="P04">P04</option>
+                        <option value="P07">P07</option>
+                        <option value="P08">P08</option>
+                        <option value="P11">P11</option>
+                        <option value="P15">P15</option>
+                        <option value="P16">P16</option>
+                        <option value="P18">P18</option>
+                        <option value="P20">P20</option>
+                        <option value="P22">P22</option>
+                        <option value="P26">P26</option>
+                        <option value="P27">P27</option>
+                        <option value="P28">P28</option>
+                        <option value="P29">P29</option>
+                        <option value="P30">P30</option>
+                        <option value="P31">P31</option>
+                        <option value="P32">P32</option>
+                        <option value="P35">P35</option>
+                        <option value="P37">P37</option>
+                        <option value="P38">P38</option>
+                        <option value="P42">P42</option>
+                        <option value="P43">P43</option>
+                        <option value="P48">P48</option>
+                        <option value="P49">P49</option>
+                        <option value="P50">P50</option>
+                        <option value="P52">P52</option>
+                        <option value="P56">P56</option>
+                    </select>
+                </label>
+
+                <label class="field field-full">
+                    <span>Local avaliado</span>
+                    <input type="text" name="local" id="local" placeholder="Informe o local" required>
+                </label>
+            </div>
+
+            <section class="rating-card">
+                <div class="rating-copy">
+                    <span class="rating-tag">Itens</span>
+                    <h2>Critérios</h2>
+                    <p>Selecione a carinha para cada critério exibido.</p>
+                </div>
 
     <!-- Bloco Sala -->
     <div id="bloco-sala" class="grid bloco-avaliacao">
@@ -114,12 +129,13 @@
         <div class="row"><label class="label">Recolhimento de papelão</label><div class="options"><input type="radio" name="rpapelao" value="1" class="button_happy" required><input type="radio" name="rpapelao" value="0" class="button_sad"><input type="radio" name="rpapelao" value="2" class="button_na" checked></div></div>
     </div>
 
-    <input type="hidden" name="date" id="date" value="">
-    <div class="submit">
-        <input type="submit" name="submit" id="submit" class="submit-button" value="Enviar">
-    </div>
+            </section>
+
+            <input type="hidden" name="date" id="date" value="">
+            <button type="submit" name="submit" id="submit" class="submit-button">Enviar</button>
 </form>
-</div>
+    </section>
+</main>
 <div id="loading-overlay" class="overlay">
     <div class="loader-box">
         <div class="spinner"></div>
